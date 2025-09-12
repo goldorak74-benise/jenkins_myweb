@@ -1,9 +1,17 @@
 pipeline{
   agent any
+  environment{
+	PATH = "$PATH:/opt/apache-maven-3.9.11/bin"
+  }
 	stages{
         stage("Git Checkout") {
             steps {
                 git credentialsId: 'github', url: 'https://github.com/goldorak74-benise/jenkins_myweb'
+            }
+        }
+		stage("Maven Build") {
+            steps {
+                sh "mvn clean package"
             }
         }
 	}
