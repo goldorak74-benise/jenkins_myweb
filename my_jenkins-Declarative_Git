@@ -12,6 +12,18 @@ pipeline{
 		stage("Maven Build") {
             steps {
                 sh "mvn clean package"
+				sh "mv target/*.war target/myweb.war"
+            }
+        }
+		stage("deploy-dev") {
+            steps {
+                sshagent(['Jenkins-tomcat']) {
+				    ssh """
+						scp -o StrictHostKeyChecking=no target/myweb.war benise@192.168.178.61:/opt/tomcat9/webapps
+						ssh benise@192.168.178.61 /opt/tomcat9/bin/shutdown.sh
+						ssh benise@192.168.178.61 /opt/tomcat9/bin/startup.sh
+					"""
+				}
             }
         }
 	}
